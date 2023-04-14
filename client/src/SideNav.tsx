@@ -89,6 +89,7 @@ export function SideNav({ state, dispatch }: SideNavProps): JSX.Element {
   const instruments: List<Instrument> = state.get('instruments');
   const activeInstrument = state.get('instrument')?.name;
   const location = useLocation();
+  console.log(instruments);
 
   return (
     <Section title="Instruments">
