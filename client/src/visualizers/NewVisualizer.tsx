@@ -14,25 +14,24 @@ export const NewVisualizer = new Visualizer(
 
     p5.background(0, 0, 0, 255);
 
-    p5.strokeWeight(2);
-    p5.noFill();
-    let x = p5.map(50, 0, 100, 0, width);
-    let y = p5.map(50, 0, 100, 0, height);
-    let r = 100;
-    p5.circle(x, y, r);
-
+    let angle = 0;
+    let r = 75;
     const values = analyzer.getValue();
     for (let i = 0; i < values.length; i++) {
       const amplitude = values[i] as number;
-      const x = p5.map(i, 0, values.length - 1, 0, width);
-      const y = p5.map(i, 0, values.length - 1, 0, height);
-      let r = height / 2 + amplitude * height;
 
-      // map hue based on x position
+      
+      const x = r * p5.cos(angle) + width/2; // add width/2
+      const y = r * p5.sin(angle) + height/2; // add height/2
+      const circleSize = amplitude * height;
+      p5.strokeWeight(4);
       let hue = p5.map(x, 0, width, 0, 360);
-      p5.stroke(hue, 100, 100);
+      p5.stroke(hue, 238, 33);
+      
+      p5.circle(x, y, circleSize);
 
-      p5.circle(x, y, r);
+      angle += p5.TWO_PI / (values.length/16);
+      r -= 0.05;
     }
   },
 );
