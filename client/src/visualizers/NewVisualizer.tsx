@@ -22,7 +22,7 @@ for (let i = 0; i < values.length; i++) {
 
   const x = r * p5.cos(angle) + width/2;
   const y = r * p5.sin(angle) + height/2;
-  const circleSize = amplitude * height;
+  let circleSize = amplitude * height * 1.5;
 
   const hue = p5.map(x, 0, width, 0, 360); // map x to a range of 20 to 80 (orange to blue)
 const saturation = p5.map(y, 0, height, 20, 70); // map y to a range of 20 to 70
@@ -40,8 +40,8 @@ p5.stroke(color);
   p5.strokeWeight(4);
   p5.circle(x, y, circleSize);
 
-  angle += (p5.TWO_PI / (values.length/16)) + p5.random(-0.01, 0.01);
-  r += 3;
+  angle += (p5.TWO_PI / (values.length/16)) + p5.random(0, 0.05);
+  r += 3 + p5.random(0, 2);
 }
 
     },
