@@ -8,7 +8,7 @@ import React from 'react';
 import { Instrument, InstrumentProps } from '../Instruments';
 
 /** ------------------------------------------------------------------------ **
- * Contains implementation of components for Piano.
+ * Contains implementation of components for Xylophone.
  ** ------------------------------------------------------------------------ */
 
  interface XyloPhoneKeyProps {
@@ -43,7 +43,7 @@ import { Instrument, InstrumentProps } from '../Instruments';
         onMouseUp={() => synth?.triggerRelease('+0.25')} // Question: what is `onMouseUp`?
         className={classNames('ba pointer absolute dim', {
           'bg-black black h3': false, // minor keys are black
-          'black bg-white h4': true, // major keys are white
+          'black bg-gray h4': true, // major keys are white
         })}
         style={{
           // CSS
