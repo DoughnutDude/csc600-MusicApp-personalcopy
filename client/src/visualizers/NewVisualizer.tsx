@@ -3,7 +3,7 @@ import * as Tone from 'tone';
 
 import { Visualizer } from '../Visualizers';
 
-export const NewVisualizer = new Visualizer(
+export const SpiralVisualizer = new Visualizer(
   'Spiral',
   (p5: P5, analyzer: Tone.Analyser) => {
     const width = window.innerWidth;

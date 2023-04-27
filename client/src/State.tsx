@@ -5,6 +5,7 @@ import { List, Map } from 'immutable';
 import { PianoInstrument } from './instruments/Piano';
 import { WaveformVisualizer } from './visualizers/Waveform';
 import { BassInstrument } from './instruments/Bass';
+import { SpiralVisualizer } from './visualizers/NewVisualizer';
 
 /** ------------------------------------------------------------------------ **
  * The entire application state is stored in AppState.
@@ -21,7 +22,7 @@ const instruments = List([PianoInstrument, BassInstrument]);       // similar to
  * Start with the default waveform visualizer.
  * Add your visualizers to this list.
  */
-const visualizers = List([WaveformVisualizer]);    // similar to Visualizer[]
+const visualizers = List([WaveformVisualizer, SpiralVisualizer]);    // similar to Visualizer[]
 
 
 /**
