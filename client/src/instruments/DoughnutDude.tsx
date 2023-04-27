@@ -16,21 +16,6 @@ function noteToFreq(k: number) {
   return 440*(Math.pow(2, (k/12)));
 }
 
-const semitones = [
-  32.70,
-  34.65,
-  36.71,
-  38.89,
-  41.20,
-  43.65,
-  46.25,
-  49.00,
-  51.91,
-  27.50,
-  29.14,
-  30.87,
-]
-
 interface SliderKeyProps {
   note: string;
   duration?: string;
@@ -52,14 +37,6 @@ function SliderType({ title, onClick, active }: any): JSX.Element {
       {title}
     </div>
   );
-}
-
-function checkIfFreqIsSemitone(note: number): boolean {
-  return  note%semitones[0]===0 || note%semitones[1]===0 || note%semitones[2]===0 ||
-          note%semitones[3]===0 || note%semitones[4]===0 || note%semitones[5]===0 ||
-          note%semitones[6]===0 || note%semitones[7]===0 || note%semitones[8]===0 ||
-          note%semitones[10]===0 || note%semitones[11]===0 || note%semitones[12]===0
-          || note % 440*(Math.pow(2, (1/12)))==0;
 }
 
 function Slider({ synth, setSynth }: InstrumentProps): JSX.Element {
@@ -181,33 +158,8 @@ function Slider({ synth, setSynth }: InstrumentProps): JSX.Element {
       <div className={'pl4 pt4 flex'}>
         <div>Frequency: {currentNote.freq.toString().padStart(5,'0')}Hz</div>, <div>Volume: {currentNote.vol}dB</div>
       </div>
-      <div className={'pl4 pt4 flex'}>
-        {/* <label htmlFor="bepis">BEPIS</label>
-        <SliderType
-          key={'trem'}
-          title={'trem'}
-          onClick={() => {
-            if(tremolo.disposed) {
-              synth.connect(tremolo);
-            } else {
-              synth.disconnect(tremolo);
-            }
-          }}
-          active={!tremolo.disposed}
-        />
-        <input name="bepis" type='range' min="0" max="1"step=".01"
-        onInput={(event) => {
-          console.log("bepis: ",(event.target as HTMLInputElement).value);//debug output
-          tremolo.set({
-            depth: parseInt((event.target as HTMLInputElement).value),
-          });
-        }}
-        style={{
-          width: '20rem',
-          backgroundColor: 'darkgray',
-          borderRadius: '5px',
-          borderColor: 'tan',
-        }}></input>, */}
+
+      {/* <div className={'pl4 pt4 flex'}>
         <label htmlFor="detune">Detune</label>
         <input name="detune" type='range'
         onInput={(event) => {
@@ -223,7 +175,8 @@ function Slider({ synth, setSynth }: InstrumentProps): JSX.Element {
           borderRadius: '5px',
           borderColor: 'tan',
         }}></input>
-      </div>
+      </div> */}
+
       <div className={'pl4 pt4 flex'}>
         {oscillators.map(o => (
           <SliderType
