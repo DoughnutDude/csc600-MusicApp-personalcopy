@@ -5,6 +5,16 @@ import * as Tone from 'tone';
 // project imports
 import { Visualizer } from '../Visualizers';
 
+const colorShiftTimeInterval = 1;
+let colorShift = 0;
+function shiftColors() {
+  if (colorShift === 255) {
+    colorShift = 0;
+  } else {
+    colorShift++;
+  }
+}
+
 export const MyVisualizer = new Visualizer(
     'Star',
     (p5: P5, analyzer: Tone.Analyser) => {
@@ -37,10 +47,16 @@ export const MyVisualizer = new Visualizer(
         
         const x = centerX + r * p5.cos(angle + angleOffset * i);
         const y = centerY + r * p5.sin(angle + angleOffset * i);
-        
+
+        const hue = p5.map(colorShift, 0,255,0,360);
+        const saturation = p5.map(amplitude,-30,100,20,100);
+        const brightness = p5.map(amplitude,-30,100,80,100);
+        const color = p5.color(hue,saturation,brightness);
+        p5.stroke(color);
         p5.vertex(x, y);
       }
     }
+    setTimeout(shiftColors,colorShiftTimeInterval);
     p5.endShape(p5.CLOSE);
   },
 
