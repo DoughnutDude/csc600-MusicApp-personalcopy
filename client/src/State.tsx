@@ -6,7 +6,7 @@ import { PianoInstrument } from './instruments/Piano';
 import { BassInstrument } from './instruments/Bass';
 import { SliderInstrument } from './instruments/DoughnutDude';
 import { WaveformVisualizer } from './visualizers/Waveform';
-import { SpiralVisualizer } from './visualizers/NewVisualizer';
+import { SpiralVisualizer } from './visualizers/Spiral';
 import { PulsingCircle } from './visualizers/DoughnutDude';
 
 /** ------------------------------------------------------------------------ **
