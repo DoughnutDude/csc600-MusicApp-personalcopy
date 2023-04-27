@@ -24,7 +24,7 @@ export const MyVisualizer = new Visualizer(
     const innerRadius = dim * 0.2;
     const outerRadius = dim * 0.4;
 
-    p5.background(0, 0, 0, 255);
+    p5.background(100, 100, 100, 255);
 
     p5.strokeWeight(dim * 0.01);
     p5.stroke(255, 255, 255, 255);
