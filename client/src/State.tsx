@@ -5,7 +5,6 @@ import { List, Map } from 'immutable';
 import { PianoInstrument } from './instruments/Piano';
 
 
-=======
 import { BassInstrument } from './instruments/Bass';
 import { SliderInstrument } from './instruments/DoughnutDude';
 import {XylophoneInstrument} from './instruments/Xylophone';
@@ -25,7 +24,7 @@ export type AppState = Map<string, any>;           // similar to { [id: string]:
  * Add your instruments to this list.
  */
 
-=======
+
 const instruments = List([PianoInstrument, BassInstrument, SliderInstrument,XylophoneInstrument]);       // similar to Instrument[]
 
 
@@ -34,7 +33,7 @@ const instruments = List([PianoInstrument, BassInstrument, SliderInstrument,Xylo
  * Add your visualizers to this list.
  */
 
-=======
+
 const visualizers = List([WaveformVisualizer, SpiralVisualizer, PulsingCircle,MyVisualizer]);    // similar to Visualizer[]
 
 
