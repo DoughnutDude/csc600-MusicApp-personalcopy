@@ -8,7 +8,6 @@ export const SpiralVisualizer = new Visualizer(
   (p5: P5, analyzer: Tone.Analyser) => {
     const width = window.innerWidth;
     const height = window.innerHeight / 2;
-    const dim = Math.min(width, height);
 
     p5.colorMode(p5.HSB, 360, 100, 100); // set color mode to HSB
 
@@ -22,7 +21,7 @@ for (let i = 0; i < values.length; i++) {
 
   const x = r * p5.cos(angle) + width/2;
   const y = r * p5.sin(angle) + height/2;
-  let circleSize = amplitude * height * 1.5;
+  let circleSize = amplitude * height / 1.75;
 
   const hue = p5.map(x, 0, width, 0, 360); // map x to a range of 20 to 80 (orange to blue)
 const saturation = p5.map(y, 0, height, 20, 70); // map y to a range of 20 to 70
@@ -41,7 +40,7 @@ p5.stroke(color);
   p5.circle(x, y, circleSize);
 
   angle += (p5.TWO_PI / (values.length/16)) + p5.random(0, 0.05);
-  r += 3 + p5.random(0, 2);
+  r += 1 + p5.random(0, 2);
 }
 
     },

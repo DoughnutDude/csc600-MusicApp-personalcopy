@@ -5,7 +5,7 @@ import { List, Map } from 'immutable';
 import { PianoInstrument } from './instruments/Piano';
 
 
-import { BassInstrument } from './instruments/Bass';
+import { SoundBoardInstrument } from './instruments/SoundBoard';
 import { SliderInstrument } from './instruments/DoughnutDude';
 import {XylophoneInstrument} from './instruments/Xylophone';
 import { WaveformVisualizer } from './visualizers/Waveform';
@@ -25,7 +25,7 @@ export type AppState = Map<string, any>;           // similar to { [id: string]:
  */
 
 
-const instruments = List([PianoInstrument, BassInstrument, SliderInstrument,XylophoneInstrument]);       // similar to Instrument[]
+const instruments = List([PianoInstrument, SoundBoardInstrument, SliderInstrument,XylophoneInstrument]);       // similar to Instrument[]
 
 
 /**
