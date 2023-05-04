@@ -24,7 +24,7 @@ export const MyVisualizer = new Visualizer(
     const innerRadius = dim * 0.2;
     const outerRadius = dim * 0.4;
 
-    p5.background(100, 100, 100, 255);
+    p5.background(0, 0, 0, 255);
 
     p5.strokeWeight(dim * 0.01);
     p5.stroke(255, 255, 255, 255);
@@ -47,12 +47,14 @@ export const MyVisualizer = new Visualizer(
         
         const x = centerX + r * p5.cos(angle + angleOffset * i);
         const y = centerY + r * p5.sin(angle + angleOffset * i);
+        let circleSize = amplitude * height / 1.75;
 
         const hue = p5.map(colorShift, 0,255,0,360);
         const saturation = p5.map(amplitude,-30,100,20,100);
         const brightness = p5.map(amplitude,-30,100,80,100);
         const color = p5.color(hue,saturation,brightness);
         p5.stroke(color);
+        p5.circle(x, y, circleSize);
         p5.vertex(x, y);
       }
     }
