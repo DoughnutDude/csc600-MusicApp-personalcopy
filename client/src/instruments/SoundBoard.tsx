@@ -27,8 +27,8 @@ export function SoundButton({
       onMouseUp={() => synth?.triggerRelease('+0.25')}
       //className={'ba pointer absolute dim'}
       style={{
-        width: '50px',  // set the width of the button
-        height: '50px', // set the height of the button
+        width: '30px',  // set the width of the button
+        height: '30px', // set the height of the button
         borderRadius: '10px',
       }}
     />
@@ -49,12 +49,12 @@ function ButtonType({ title, onClick, active }: any): JSX.Element {
   );
 }
 
-function SoundBoard({ setSynth }: InstrumentProps): JSX.Element {
+function SoundBoard({ synth, setSynth }: InstrumentProps): JSX.Element {
   const keys = ['C', 'D', 'E', 'G'];
   const octaves = [1, 2, 3, 4];
   const grid = Array.from({ length: octaves.length }, () => new Array(keys.length).fill(false));
 
-  const synth = new Tone.Synth().toDestination();
+  //const synth = new Tone.Synth().toDestination();
 
   const setOscillator = (newType: Tone.ToneOscillatorType) => {
     setSynth(oldSynth => {
