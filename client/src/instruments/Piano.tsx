@@ -2,10 +2,10 @@
 import * as Tone from 'tone';
 import classNames from 'classnames';
 import { List, Range } from 'immutable';
-import React from 'react';
 
 // project imports
 import { Instrument, InstrumentProps } from '../Instruments';
+import React, {useEffect} from 'react'
 
 /** ------------------------------------------------------------------------ **
  * Contains implementation of components for Piano.
@@ -139,6 +139,11 @@ function Piano({ synth, setSynth }: InstrumentProps): JSX.Element {
     'amtriangle',
   ]) as List<OscillatorType>;
 
+  // this is so oscillator for organ does not interfere here
+  useEffect(() => {
+    setOscillator('sine');
+  }, []); 
+
   return (
     <div className="pv4">
       <div className="relative dib h4 w-100 ml4">
@@ -165,7 +170,7 @@ function Piano({ synth, setSynth }: InstrumentProps): JSX.Element {
             key={o}
             title={o}
             onClick={() => setOscillator(o)}
-            active={synth?.oscillator.type === o}
+            active={synth?.get().oscillator.type === o}
           />
         ))}
       </div>

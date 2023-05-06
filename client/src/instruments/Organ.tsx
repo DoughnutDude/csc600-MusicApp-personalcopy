@@ -2,16 +2,16 @@
 import * as Tone from 'tone';
 import classNames from 'classnames';
 import { List, Range } from 'immutable';
-import React from 'react';
 
 // project imports
 import { Instrument, InstrumentProps } from '../Instruments';
+import React, {useEffect} from 'react'
 
 /** ------------------------------------------------------------------------ **
- * Contains implementation of components for Guitar.
+ * Contains implementation of components for Organs.
  ** ------------------------------------------------------------------------ */
 
-interface GuitarKeyProps {
+interface OrgansKeyProps {
   note: string; // C, Db, D, Eb, E, F, Gb, G, Ab, A, Bb, B
   duration?: string;
   synth?: Tone.Synth; // Contains library code for making sound
@@ -20,15 +20,16 @@ interface GuitarKeyProps {
   index: number; // octave + index together give a location for the Guitar key
 }
 
-export function GuitarKey({
+
+export function OrgansKey({
   note,
   synth,
   minor,
   index,
-}: GuitarKeyProps): JSX.Element {
+}: OrgansKeyProps): JSX.Element {
   /**
-   * This React component corresponds to either a major or minor key in the Guitar.
-   * See `GuitarKeyWithoutJSX` for the React component without JSX.
+   * This React component corresponds to either a major or minor key in the Organs.
+   * See `OrgansKeyWithoutJSX` for the React component without JSX.
    */
   return (
     // Observations:
@@ -36,8 +37,24 @@ export function GuitarKey({
     // 2. The JSX will be **transpiled** into the corresponding `React.createElement` library call.
     // 3. The curly braces `{` and `}` should remind you of string interpolation.
     <div
-      onMouseDown={() => {synth?.triggerAttack(`${note}` ); console.log(note+ ' ' + synth+ ' ' + minor+ ' ' + index)}} // Question: what is `onMouseDown`?
-      onMouseUp={() => synth?.triggerRelease('+0.25')} // Question: what is `onMouseUp`?
+      onMouseDown={() => synth?.triggerAttack(`${note}`)}
+      // onMouseUp={() => {synth?.triggerRelease('now')}} // Question: what is `onMouseUp`?
+      onMouseUp={() => {console.log('onMouseUp triggered', note);
+      
+      setTimeout(() => {
+        synth?.triggerRelease(note)
+      }, 500);
+    }}
+
+
+      onMouseLeave={() => {console.log('onMouseUp triggered', note);
+
+      setTimeout(() => {
+        synth?.triggerRelease(note)
+      }, 500);
+      
+    
+    }}
       className={classNames('ba pointer absolute dim', {
         'bg-black black h3': minor, // minor keys are black
         'black bg-white h4': !minor, // major keys are white
@@ -48,45 +65,17 @@ export function GuitarKey({
         left: `${index * 2}rem`,
         zIndex: minor ? 1 : 0,
         width: minor ? '1.5rem' : '2rem',
+        height: !minor ? '10rem': '6.75rem',
         marginLeft: minor ? '0.25rem' : 0,
+        backgroundColor: !minor ? '#c19a6b' : '',
+        borderRadius:'5px',
       }}
     ></div>
   );
 }
 
-// eslint-disable-next-line
-function GuitarKeyWithoutJSX({
-  note,
-  synth,
-  minor,
-  index,
-}: GuitarKeyProps): JSX.Element {
-  /**
-   * This React component for pedagogical purposes.
-   * See `GuitarKey` for the React component with JSX (JavaScript XML).
-   */
-  return React.createElement(
-    'div',
-    {
-      onMouseDown: () => synth?.triggerAttack(`${note}`),
-      onMouseUp: () => synth?.triggerRelease('+0.25'),
-      className: classNames('ba pointer absolute dim', {
-        'bg-black black h3': minor,
-        'black bg-white h4': !minor,
-      }),
-      style: {
-        top: 0,
-        left: `${index * 2}rem`,
-        zIndex: minor ? 1 : 0,
-        width: minor ? '1.5rem' : '2rem',
-        marginLeft: minor ? '0.25rem' : 0,
-      },
-    },
-    [],
-  );
-}
 
-function GuitarType({ title, onClick, active }: any): JSX.Element {
+function OrgansType({ title, onClick, active }: any): JSX.Element {
   return (
     <div
       onClick={onClick}
@@ -100,7 +89,9 @@ function GuitarType({ title, onClick, active }: any): JSX.Element {
   );
 }
 
-function Guitar({ synth, setSynth }: InstrumentProps): JSX.Element {
+
+function Organs({ synth, setSynth }: InstrumentProps): JSX.Element {
+  
   const keys = List([
     { note: 'C', idx: 0 },
     { note: 'Db', idx: 0.5 },
@@ -116,16 +107,33 @@ function Guitar({ synth, setSynth }: InstrumentProps): JSX.Element {
     { note: 'B', idx: 6 },
   ]);
 
+  
+
   const setOscillator = (newType: Tone.ToneOscillatorType) => {
+    console.log(newType);
 
-    console.log(newType)
 
-    setSynth(oldSynth => {
+  
+    setSynth((oldSynth) => {
       oldSynth.disconnect();
 
-      return new Tone.Synth({
+      return new Tone.PolySynth(Tone.FMSynth, {
         oscillator: { type: newType } as Tone.OmniOscillatorOptions,
-      }).toDestination();
+        modulationIndex: 10,
+        envelope: {
+          attack: 0.05,
+          decay: 0.3,
+          sustain: 0.9,
+          release: 1,
+        },
+        modulation: { type: 'sawtooth' },
+        modulationEnvelope: {
+          attack: 0.5,
+          decay: 0.1,
+          sustain: 1,
+          release: 0.5,
+        },
+      }).toDestination() as any;
     });
   };
 
@@ -134,23 +142,24 @@ function Guitar({ synth, setSynth }: InstrumentProps): JSX.Element {
     'sawtooth',
     'square',
     'triangle',
-    'fmsine',
-    'fmsawtooth',
-    'fmtriangle',
     'amsine',
     'amsawtooth',
     'amtriangle',
   ]) as List<OscillatorType>;
 
+  useEffect(() => {
+    setOscillator('sine');
+  }, []); 
+
   return (
     <div className="pv4">
-      <div className="relative dib h4 w-100 ml4">
-        {Range(2, 7).map(octave =>
+        <div className="relative dib h4 w-100 ml4">
+        {Range(2, 6).map(octave =>
           keys.map(key => {
             const isMinor = key.note.indexOf('b') !== -1;
             const note = `${key.note}${octave}`;
             return (
-              <GuitarKey
+              <OrgansKey
                 key={note} //react key
                 note={note}
                 synth={synth}
@@ -162,13 +171,13 @@ function Guitar({ synth, setSynth }: InstrumentProps): JSX.Element {
           }),
         )}
       </div>
-      <div className={'pl4 pt4 flex'}>
+      <div className={'pl4 pt4 flex'} style={{marginTop:'30px'}}>
         {oscillators.map(o => (
-          <GuitarType
+          <OrgansType
             key={o}
             title={o}
             onClick={() => setOscillator(o)}
-            active={synth?.oscillator.type === o}
+            active={synth?.get().oscillator.type === o}
           />
         ))}
       </div>
@@ -176,4 +185,4 @@ function Guitar({ synth, setSynth }: InstrumentProps): JSX.Element {
   );
 }
 
-export const GuitarInstrument = new Instrument('Guitar', Guitar);
+export const OrgansInstrument = new Instrument('Organs', Organs);

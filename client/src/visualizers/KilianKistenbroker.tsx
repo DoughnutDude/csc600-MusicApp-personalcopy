@@ -33,7 +33,7 @@ function shiftColors() {
 }
 
 export const KilianKistenbroker = new Visualizer(
-  'KilianKistenbroker',
+  'Lissajous',
 
   // --------------------------------------- circle ----------------------------------------- //
 
