@@ -2,7 +2,7 @@
 import * as Tone from 'tone';
 import classNames from 'classnames';
 import { List, Range } from 'immutable';
-import React from 'react';
+import React,{useEffect} from 'react';
 
 // project imports
 import { Instrument, InstrumentProps } from '../Instruments';
@@ -20,13 +20,37 @@ import { Instrument, InstrumentProps } from '../Instruments';
     index: number; // octave + index together give a location for the piano key
     order: number;
   }
+
+  const helper = (num: number) => {
+    if (num > 16) {
+      return (num -2.5)
+    }
+    else if (num > 13) {
+      return (num -2)
+    }
+    else if (num > 9) {
+      return (num - 1.5)
+    }
+    else if (num > 6) {
+      return (num - 1);
+    } else if (num > 2) {
+      return (num - .5)
+    }
+    else return num;
+  }
+
+  function playsound(synth: any, note: string, duration: string) {
+    const frequency = Tone.Frequency(note).toFrequency();
+    synth.frequency.value = frequency;
+    synth.triggerAttackRelease(note, duration);
+  }
   
   export function XyloPhoneKey({
     note,
     synth,
-    minor,
+    //minor,
     index,
-    order,
+   // order,
   }: XyloPhoneKeyProps): JSX.Element {
     /**
      * This React component corresponds to either a major or minor key in the piano.
@@ -39,7 +63,8 @@ import { Instrument, InstrumentProps } from '../Instruments';
       // 2. The JSX will be **transpiled** into the corresponding `React.createElement` library call.
       // 3. The curly braces `{` and `}` should remind you of string interpolation.
       <div
-        onMouseDown={() => synth?.triggerAttack(`${note}`)} // Question: what is `onMouseDown`?
+        //onMouseDown={() => synth?.triggerAttack(`${note}`)} // Question: what is `onMouseDown`?
+        onMouseDown={()=> synth && playsound(synth, note, '0.25')}
         onMouseUp={() => synth?.triggerRelease('+0.25')} // Question: what is `onMouseUp`?
         className={classNames('ba pointer absolute dim', {
           'bg-black black h3': false, // minor keys are black
@@ -48,11 +73,12 @@ import { Instrument, InstrumentProps } from '../Instruments';
         style={{
           // CSS
           top: 0,
-          left: `${index*2}rem`,
+          left: `${helper(index)*3}rem`,
           zIndex: 0,
-          width: '1rem',
-          marginLeft:  0,
-          height: `${10-(index*0.2)}rem`
+          width: '1.25rem',
+          marginLeft:  '10px',
+          marginRight: '10px',
+          height: `${10-(index*0.2)}rem`,
         }}
       ></div>
     );
@@ -62,7 +88,7 @@ import { Instrument, InstrumentProps } from '../Instruments';
   function XyloPhoneWithoutJSX({
     note,
     synth,
-    minor,
+    //minor,
     index,
   }: XyloPhoneKeyProps): JSX.Element {
     /**
@@ -113,6 +139,7 @@ function Xylophone({ synth, setSynth }: InstrumentProps): JSX.Element {
         { note: 'D', idx: 1 },
         { note: 'Eb', idx: 1.5 },
         { note: 'E', idx: 2 },
+        //{ note: 'E', idx: 2.5 },
         { note: 'F', idx: 3 },
         { note: 'Gb', idx: 3.5 },
         { note: 'G', idx: 4 },
@@ -122,13 +149,25 @@ function Xylophone({ synth, setSynth }: InstrumentProps): JSX.Element {
         { note: 'B', idx: 6 },
       ]);
     
-      const setOscillator = (newType: Tone.ToneOscillatorType) => {
+      const setOscillator = () => {
         setSynth(oldSynth => {
           oldSynth.disconnect();
     
-          return new Tone.Synth({
-            oscillator: { type: newType } as Tone.OmniOscillatorOptions,
-          }).toDestination();
+          return new Tone.MetalSynth({
+            
+            envelope:{
+              attack: 0.08,
+              decay:0.3,
+              sustain:1,
+              release:0.5,
+            },
+            harmonicity:5.1,
+            modulationIndex:32,
+            resonance: 4000,
+            octaves:1.5,
+
+            //oscillator: { type: newType } as Tone.OmniOscillatorOptions,
+          }).toDestination() as any;
         });
       };
     
@@ -145,10 +184,14 @@ function Xylophone({ synth, setSynth }: InstrumentProps): JSX.Element {
         'amtriangle',
       ]) as List<OscillatorType>;
     
+       useEffect(() =>{
+         setOscillator();
+       }, [])
+
       return (
-        <div className="pv4">
+        <div className="pv4" style= {{}}>
           <div className="relative dib h4 w-100 ml4">
-            {Range(2, 7).map(octave =>
+            {Range(2, 5).map(octave =>
               keys.map((key, idx) => {
                 const isMinor = key.note.indexOf('b') !== -1;
                 const note = `${key.note}${octave}`;
@@ -171,8 +214,8 @@ function Xylophone({ synth, setSynth }: InstrumentProps): JSX.Element {
               <XyloPhoneType
                 key={o}
                 title={o}
-                onClick={() => setOscillator(o)}
-                active={synth?.oscillator.type === o}
+                //onClick={() => setOscillator(o)}
+                //active={synth?.oscillator.type === o}
               />
             ))}
           </div>
