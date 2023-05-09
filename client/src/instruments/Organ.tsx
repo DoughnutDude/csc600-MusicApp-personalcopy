@@ -5,7 +5,7 @@ import { List, Range } from 'immutable';
 
 // project imports
 import { Instrument, InstrumentProps } from '../Instruments';
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 
 /** ------------------------------------------------------------------------ **
  * Contains implementation of components for Organs.
@@ -14,7 +14,7 @@ import React, {useEffect} from 'react'
 interface OrgansKeyProps {
   note: string; // C, Db, D, Eb, E, F, Gb, G, Ab, A, Bb, B
   duration?: string;
-  synth?: Tone.Synth; // Contains library code for making sound
+  synth?: any; // Contains library code for making sound
   minor?: boolean; // True if minor key, false if major key
   octave: number;
   index: number; // octave + index together give a location for the Guitar key
@@ -40,20 +40,14 @@ export function OrgansKey({
       onMouseDown={() => synth?.triggerAttack(`${note}`)}
       // onMouseUp={() => {synth?.triggerRelease('now')}} // Question: what is `onMouseUp`?
       onMouseUp={() => {console.log('onMouseUp triggered', note);
-      
       setTimeout(() => {
         synth?.triggerRelease(note)
       }, 500);
     }}
-
-
       onMouseLeave={() => {console.log('onMouseUp triggered', note);
-
       setTimeout(() => {
         synth?.triggerRelease(note)
       }, 500);
-      
-    
     }}
       className={classNames('ba pointer absolute dim', {
         'bg-black black h3': minor, // minor keys are black
@@ -74,7 +68,6 @@ export function OrgansKey({
   );
 }
 
-
 function OrgansType({ title, onClick, active }: any): JSX.Element {
   return (
     <div
@@ -89,9 +82,26 @@ function OrgansType({ title, onClick, active }: any): JSX.Element {
   );
 }
 
-
 function Organs({ synth, setSynth }: InstrumentProps): JSX.Element {
-  
+
+  const [mySynth, mySetSynth] = useState(new Tone.PolySynth(Tone.FMSynth, {
+    oscillator: { type: 'sine' } as Tone.OmniOscillatorOptions,
+    modulationIndex: 10,
+    envelope: {
+      attack: 0.05,
+      decay: 0.3,
+      sustain: 0.9,
+      release: 1,
+    },
+    modulation: { type: 'sawtooth' },
+    modulationEnvelope: {
+      attack: 0.5,
+      decay: 0.1,
+      sustain: 1,
+      release: 0.5,
+    },
+  }).toDestination() as any)
+
   const keys = List([
     { note: 'C', idx: 0 },
     { note: 'Db', idx: 0.5 },
@@ -106,15 +116,12 @@ function Organs({ synth, setSynth }: InstrumentProps): JSX.Element {
     { note: 'Bb', idx: 5.5 },
     { note: 'B', idx: 6 },
   ]);
-
-  
-
   const setOscillator = (newType: Tone.ToneOscillatorType) => {
     console.log(newType);
 
 
-  
-    setSynth((oldSynth) => {
+
+    mySetSynth((oldSynth: any) => {
       oldSynth.disconnect();
 
       return new Tone.PolySynth(Tone.FMSynth, {
@@ -162,7 +169,7 @@ function Organs({ synth, setSynth }: InstrumentProps): JSX.Element {
               <OrgansKey
                 key={note} //react key
                 note={note}
-                synth={synth}
+                synth={mySynth}
                 minor={isMinor}
                 octave={octave}
                 index={(octave - 2) * 7 + key.idx}
@@ -177,7 +184,7 @@ function Organs({ synth, setSynth }: InstrumentProps): JSX.Element {
             key={o}
             title={o}
             onClick={() => setOscillator(o)}
-            active={synth?.get().oscillator.type === o}
+            active={mySynth?.get().oscillator.type === o}
           />
         ))}
       </div>
