@@ -2,7 +2,7 @@
 import * as Tone from 'tone';
 import classNames from 'classnames';
 import { List, Range } from 'immutable';
-import React,{useEffect} from 'react';
+import React,{useEffect, useState} from 'react';
 
 // project imports
 import { Instrument, InstrumentProps } from '../Instruments';
@@ -14,7 +14,7 @@ import { Instrument, InstrumentProps } from '../Instruments';
  interface XyloPhoneKeyProps {
     note: string; // C, Db, D, Eb, E, F, Gb, G, Ab, A, Bb, B
     duration?: string;
-    synth?: Tone.Synth; // Contains library code for making sound
+    synth?: any; // Contains library code for making sound
     minor?: boolean; // True if minor key, false if major key
     octave: number;
     index: number; // octave + index together give a location for the piano key
@@ -133,6 +133,11 @@ import { Instrument, InstrumentProps } from '../Instruments';
 
 function Xylophone({ synth, setSynth }: InstrumentProps): JSX.Element {
 
+  const [mySynth, mySetSynth] = useState({})
+
+//let mySynth = JSON.parse(JSON.stringify(synth))
+//let mySetSynth = JSON.parse(JSON.stringify(setSynth))
+
     const keys = List([
         { note: 'C', idx: 0 },
         { note: 'Db', idx: 0.5 },
@@ -150,8 +155,8 @@ function Xylophone({ synth, setSynth }: InstrumentProps): JSX.Element {
       ]);
     
       const setOscillator = () => {
-        setSynth(oldSynth => {
-          oldSynth.disconnect();
+        mySetSynth(oldSynth => {
+          //oldSynth.disconnect();
     
           return new Tone.MetalSynth({
             
@@ -199,7 +204,7 @@ function Xylophone({ synth, setSynth }: InstrumentProps): JSX.Element {
                   <XyloPhoneKey
                     key={note} //react key
                     note={note}
-                    synth={synth}
+                    synth={mySynth}
                     minor={isMinor}
                     octave={octave}
                     index={(octave - 2) * 7 + key.idx}
