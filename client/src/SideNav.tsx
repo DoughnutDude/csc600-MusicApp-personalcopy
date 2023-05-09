@@ -196,6 +196,7 @@ function RadioButton({ to, text, active, onClick }: RadioButtonProps): JSX.Eleme
   return (
     <Link to={to} className="no-underline">
       <div
+        style={{padding: '5px'}}
         className={classNames('f6 flex items-center black', { fw7: active })}
         onClick={onClick}
       >
@@ -219,7 +220,7 @@ const Section: React.FC<{ title: string }> = ({ title, children }) => {
   return (
     <div className="flex flex-column h-25 bb b--light-gray pa3">
       <div className="fw7 mb2">{title} </div>
-      <div className="flex-auto overflow-scroll">{children}</div>
+      <div className="flex-auto overflow-scroll" >{children}</div>
     </div>
   );
 };

@@ -60,19 +60,44 @@ export const InstrumentContainer: React.FC<InstrumentContainerProps> = ({
 
   const notes = state.get('notes');
 
+  //This function takes in the duration component of the note and changes it to be
+  // the correct timing subdivision to be added to the total playback time counter.
+  function noteDurationToTime(duration: string) {
+    let denom: number = parseInt(duration.charAt(0));
+    if (duration.includes('t')) { //triplet
+      return 1/(denom*3);
+    } else if (duration.includes('.')) {
+      return 1.5/denom;
+    } else {
+      return 1/denom;
+    }
+  }
+
   useEffect(() => {
     if (notes && synth) {
+      let playbackTime = 0;
       let eachNote = notes.split(' ');
-      let noteObjs = eachNote.map((note: string, idx: number) => ({
+      for (let i: number = 0; i < eachNote.length; i++) {
+        eachNote[i] = eachNote[i].split('/'); //split each note to get pitch and duration
+      }
+      console.log("eachNote",JSON.stringify(eachNote));//debug output
+
+      let noteObjs = eachNote.map((note: string, idx: number) => {
+        let result = {
         idx,
-        time: `+${idx / 4}`,
-        note,
+        time: `+${playbackTime}`,
+        duration: note[1],
+        note: note[0],
         velocity: 1,
-      }));
+      }
+      playbackTime += noteDurationToTime(note[1]);
+      console.log("playbackTime:",playbackTime);//debug output
+      return result;
+    });
 
       new Tone.Part((time, value) => {
         // the value is an object which contains both the note and the velocity
-        synth.triggerAttackRelease(value.note, '4n', time, value.velocity);
+        synth.triggerAttackRelease(value.note, value.duration, time, value.velocity);
         if (value.idx === eachNote.length - 1) {
           dispatch(new DispatchAction('STOP_SONG'));
         }

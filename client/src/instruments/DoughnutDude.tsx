@@ -2,7 +2,7 @@
 import * as Tone from 'tone';
 import classNames from 'classnames';
 import { List, Range } from 'immutable';
-import React, { FormEvent } from 'react';
+import React, { useEffect, FormEvent } from 'react';
 
 // project imports
 import { Instrument, InstrumentProps } from '../Instruments';
@@ -64,6 +64,10 @@ function Slider({ synth, setSynth }: InstrumentProps): JSX.Element {
     'amtriangle',
   ]) as List<OscillatorType>;
 
+  useEffect(() => {
+    setOscillator('sine');
+  }, []); 
+  
   const keys = List([
     { note: 'C', idx: 0 },
     { note: 'Db', idx: 0.5 },
