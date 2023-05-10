@@ -18,8 +18,16 @@ export const SpiralVisualizer = new Visualizer(
     const values = analyzer.getValue();
 
     p5.translate(width / 2, height / 2); // Move the origin to the center of the canvas
-    
-    p5.rotate(p5.frameCount); // Rotate the entire visualization based on frame count
+
+    // Calculate the average amplitude
+    let sum = 0;
+    for (let i = 0; i < values.length; i++) {
+      sum += values[i] as number;
+    }
+    const averageAmplitude = 10 * sum / values.length;
+
+    const rotationSpeed = p5.map(averageAmplitude, 0, 1, 0.001, 0.02); // Adjust the range and speed as needed
+    p5.rotate(p5.frameCount * rotationSpeed); // Rotate the entire visualization based on frame count and average amplitude
 
     for (let i = 0; i < values.length; i += 3) {
       const amplitude = values[i] as number;
@@ -28,7 +36,7 @@ export const SpiralVisualizer = new Visualizer(
       const y = r * p5.sin(angle);
       let circleSize = 1 + (amplitude * height) / 4;
 
-      const hue = p5.map(x, -width / 2, width / 2, 0, 360);
+      const hue = (p5.map(x, -width / 2, width / 2, 0, 360) + p5.frameCount) % 360; // Vary the hue over time
       const saturation = p5.map(y, -height / 2, height / 2, 20, 70);
       const baseBrightness = 60;
       const amplitudeBrightness = p5.map(amplitude, 0, 1, 50, 70);
@@ -40,13 +48,13 @@ export const SpiralVisualizer = new Visualizer(
       p5.strokeWeight(4);
       p5.circle(x, y, circleSize);
 
-      // Worm-like effect
-      const wormSize = circleSize * 0.25; // Size of the worm-like motion
-      const wormOffset = p5.map(amplitude, 0, 1, -wormSize, wormSize); // Offset based on the amplitude
-      const wormX = x + wormOffset;
-      const wormY = y + wormOffset;
+      // wiggle-like effect
+      const wiggleSize = circleSize * 0.25; // Size of the wiggle-like motion
+      const wiggleOffset = p5.map(amplitude, 0, 1, -wiggleSize, wiggleSize); // Offset based on the amplitude
+      const wiggleX = x + wiggleOffset;
+      const wiggleY = y + wiggleOffset;
 
-      p5.circle(wormX, wormY, circleSize);
+      p5.circle(wiggleX, wiggleY, circleSize);
 
       angle += p5.TWO_PI / (values.length / 12) + p5.random(0, 0.05);
       r += 3;
