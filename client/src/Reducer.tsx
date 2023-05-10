@@ -80,7 +80,12 @@ export function appReducer(state: AppState, action: DispatchAction): AppState {
           .get('songs')
           .find((s: any) => s.get('id') === args.get('id'))
           .get('notes');
-        return state.set('notes', notes);
+        const bpm = state
+          .get('songs')
+          .find((s: any) => s.get('id') === args.get('id'))
+          .get('bpm');
+        //console.log("bpm:",bpm);//debug output
+        return state.set('notes', notes).set('bpm', bpm);
       }
       case 'STOP_SONG': {
         return state.delete('notes');

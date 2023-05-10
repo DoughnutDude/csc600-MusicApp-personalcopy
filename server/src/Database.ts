@@ -35,7 +35,7 @@ export class DB {
     const existsAlready = await DB.exists();
     const db = new sqlite3.Database(DB.DB_PATH);
 
-    if (!existsAlready && !this.hasInitialized) {
+    if (true){//!existsAlready && !this.hasInitialized) {
       // We can do this because TypeScript is single-threaded and guaranteed
       // not to put us back into a wait queue if we don't await.
       DB.hasInitialized = true;

@@ -59,9 +59,10 @@ export const InstrumentContainer: React.FC<InstrumentContainerProps> = ({
   );
 
   const notes = state.get('notes');
+  const bpm = state.get('bpm');
 
   //This function takes in the duration component of the note and changes it to be
-  // the correct timing subdivision to be added to the total playback time counter.
+  // the correct timing subdivision in seconds/fractions of a second.
   function noteDurationToTime(duration: string) {
     let denom: number = parseInt(duration.charAt(0));
     if (duration.includes('t')) { //triplet
@@ -74,6 +75,7 @@ export const InstrumentContainer: React.FC<InstrumentContainerProps> = ({
   }
 
   useEffect(() => {
+    const notes = state.get('notes');
     if (notes && synth) {
       let playbackTime = 0;
       let eachNote = notes.split(' ');
@@ -85,13 +87,13 @@ export const InstrumentContainer: React.FC<InstrumentContainerProps> = ({
       let noteObjs = eachNote.map((note: string, idx: number) => {
         let result = {
         idx,
-        time: `+${playbackTime}`,
+        time: `+${playbackTime*120/bpm}`,
         duration: note[1],
         note: note[0],
         velocity: 1,
       }
       playbackTime += noteDurationToTime(note[1]);
-      console.log("playbackTime:",playbackTime);//debug output
+      //console.log("playbackTime:",playbackTime);//debug output
       return result;
     });
 
