@@ -24,9 +24,9 @@ export const SpiralVisualizer = new Visualizer(
     for (let i = 0; i < values.length; i++) {
       sum += values[i] as number;
     }
-    const averageAmplitude = 10 * sum / values.length;
+    const averageAmplitude = 20 * sum / values.length;
 
-    const rotationSpeed = p5.map(averageAmplitude, 0, 1, 0.001, 0.02); // Adjust the range and speed as needed
+    const rotationSpeed = p5.map(averageAmplitude, 0, 1, 0.01, 0.1); // Adjust the range and speed as needed
     p5.rotate(p5.frameCount * rotationSpeed); // Rotate the entire visualization based on frame count and average amplitude
 
     for (let i = 0; i < values.length; i += 3) {
@@ -34,15 +34,12 @@ export const SpiralVisualizer = new Visualizer(
 
       const x = r * p5.cos(angle);
       const y = r * p5.sin(angle);
-      let circleSize = 1 + (amplitude * height) / 4;
+      let circleSize = 1 + (amplitude * height) / 3;
 
-      const hue = (p5.map(x, -width / 2, width / 2, 0, 360) + p5.frameCount) % 360; // Vary the hue over time
-      const saturation = p5.map(y, -height / 2, height / 2, 20, 70);
-      const baseBrightness = 60;
-      const amplitudeBrightness = p5.map(amplitude, 0, 1, 50, 70);
-      const color1 = p5.color(hue, saturation, amplitudeBrightness);
-      const color2 = p5.color(128, 128, 128, baseBrightness);
-      const color = p5.lerpColor(color1, color2, 0.5);
+      const hue = (p5.map(x, -width / 2, width / 2, 200 , 300 + amplitude * p5.frameCount * 10) ) % 360; // Vary the hue over time
+      const saturation = p5.map(y, -height / 2, height / 2, 70, 80);
+      const brightness = p5.map(amplitude, 0, 1, 60, 100);
+      const color = p5.color(hue, saturation, brightness);
 
       p5.stroke(color);
       p5.strokeWeight(4);
@@ -57,7 +54,7 @@ export const SpiralVisualizer = new Visualizer(
       p5.circle(wiggleX, wiggleY, circleSize);
 
       angle += p5.TWO_PI / (values.length / 12) + p5.random(0, 0.05);
-      r += 3;
+      r += 2;
     }
   }
 );
