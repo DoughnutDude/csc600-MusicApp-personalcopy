@@ -88,6 +88,44 @@ export const InstrumentContainer: React.FC<InstrumentContainerProps> = ({
     return () => {};
   }, [notes, synth, dispatch]);
 
+  useEffect(()=> {
+    console.log('state changed to')
+    console.log(state.get('instrument')?.name)
+
+
+    if (state.get('instrument')?.name === 'Organs') {
+      setSynth((oldSynth: any) => {
+        oldSynth.disconnect();
+  
+        return new Tone.PolySynth(Tone.FMSynth, {
+          oscillator: { type: 'sine' } as Tone.OmniOscillatorOptions,
+          modulationIndex: 10,
+          envelope: {
+            attack: 0.05,
+            decay: 0.3,
+            sustain: 0.9,
+            release: 1,
+          },
+          modulation: { type: 'sawtooth' },
+          modulationEnvelope: {
+            attack: 0.5,
+            decay: 0.1,
+            sustain: 1,
+            release: 0.5,
+          },
+        }).toDestination() as any;
+      });
+    } else {
+      setSynth(oldSynth => {
+        oldSynth.disconnect();
+  
+        return new Tone.Synth({
+          oscillator: { type: 'sine' } as Tone.OmniOscillatorOptions,
+        }).toDestination();
+      });
+    }
+  }, [state])
+
   return (
     <div>
       <TopNav name={instrument.name} />
