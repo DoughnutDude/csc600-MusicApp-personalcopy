@@ -151,7 +151,22 @@ export const InstrumentContainer: React.FC<InstrumentContainerProps> = ({
         }).toDestination();
       });
     }
-  }, [state])
+
+    // this should resolve the playlist bug.
+    /* playlist was changing the state and triggering this useEffect, 
+    so I made the param more specific */
+    
+  }, [state.get('instrument')?.name])
+
+
+
+  /* this will simulate a wait() so that non-compatible synths are not passed 
+  into InstrumentComponent */
+
+  if (!synth.oscillator && state.get('instrument')?.name !== 'Organs' ||
+  !synth.get().oscillator && state.get('instrument')?.name === "Organs") {
+    return <div>Loading...</div>
+  }
 
   return (
     <div>
