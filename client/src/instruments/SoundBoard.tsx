@@ -1,38 +1,38 @@
 // 3rd party library imports
-import * as Tone from 'tone';
-import classNames from 'classnames';
-import { List } from 'immutable';
-import { useEffect, useState} from 'react';
+import * as Tone from "tone";
+import classNames from "classnames";
+import { List } from "immutable";
+import { useEffect, useState } from "react";
 
 // project imports
-import { Instrument, InstrumentProps } from '../Instruments';
+import { Instrument, InstrumentProps } from "../Instruments";
 
 /** ------------------------------------------------------------------------ **
- * Contains implementation of components for Piano.
+ * Contains implementation of components for a SoundBoard
  ** ------------------------------------------------------------------------ */
 
 interface SoundButtonProps {
-  note: string; // e.g. C1, D#2, Gb3, etc.
+  note: string;
   synth?: Tone.Synth;
 }
-
-export function SoundButton({
-  note,
-  synth,
-}: SoundButtonProps): JSX.Element {
+export function SoundButton({ note, synth }: SoundButtonProps): JSX.Element {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [repeatCount, setRepeatCount] = useState(0);
+  const [buttonColor, setButtonColor] = useState("white");
 
-  const playNote = (repeatCount: number) => {
+  const playNote = (count: number) => {
     setIsPlaying(true);
+    setRepeatCount(count);
     if (synth) {
       synth.triggerAttackRelease(note, "8n");
       setTimeout(() => {
-        if (repeatCount > 1) {
-          playNote(repeatCount - 1);
+        if (count > 1) {
+          playNote(count - 1);
         } else {
           setIsPlaying(false);
+          setRepeatCount(0);
         }
-      }, 500); // Adjust the duration between repeats (in milliseconds)
+      }, 500);
     }
   };
 
@@ -58,32 +58,47 @@ export function SoundButton({
     };
   }, [isPlaying, note, synth]);
 
+  useEffect(() => {
+    if (isPlaying) {
+      const colors = [
+        "red",
+        "blue",
+        "green",
+        "yellow",
+        "pink",
+        "orange",
+        "purple",
+        "white",
+      ];
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      setButtonColor(randomColor);
+    }
+  }, [isPlaying]);
+
+  const buttonClassName = isPlaying ? `bg-${buttonColor}` : `bg`;
+
   return (
     <button
-      onMouseDown={() => playNote(4)} // Repeat the note 4 times
+      onMouseDown={() => playNote(4)}
       onMouseUp={stopNote}
       onMouseLeave={stopNote}
-      className={classNames({
-        playing: isPlaying,
-      })}
+      className={buttonClassName}
       style={{
-        width: '30px',
-        height: '30px',
-        borderRadius: '10px',
+        width: "30px",
+        height: "30px",
+        borderRadius: "10px",
       }}
     />
   );
 }
 
-
-
 function ButtonType({ title, onClick, active }: any): JSX.Element {
   return (
     <div
       onClick={onClick}
-      className={classNames('dim pointer ph2 pv1 ba mr2 br1 fw7 bw1', {
-        'b--black black': active,
-        'gray b--light-gray': !active,
+      className={classNames("dim pointer ph2 pv1 ba mr2 br1 fw7 bw1", {
+        "b--black black": active,
+        "gray b--light-gray": !active,
       })}
     >
       {title}
@@ -91,34 +106,29 @@ function ButtonType({ title, onClick, active }: any): JSX.Element {
   );
 }
 
-function SoundBoard({ synth, setSynth}: InstrumentProps): JSX.Element {
-
-  
-
-  const keys = ['C', 'D', 'E', 'G'];
+function SoundBoard({ synth, setSynth }: InstrumentProps): JSX.Element {
+  const keys = ["C", "D", "E", "G"];
   const octaves = [4, 3, 2, 1];
-  const grid = Array.from({ length: octaves.length }, () => new Array(keys.length).fill(false));
-
+  const grid = Array.from({ length: octaves.length }, () =>
+    new Array(keys.length).fill(false)
+  );
 
   const oscillators: List<OscillatorType> = List([
-    'sine',
-    'sawtooth',
-    'square',
-    'triangle',
-    'fmsine',
-    'fmsawtooth',
-    'fmtriangle',
-    'amsine',
-    'amsawtooth',
-    'amtriangle',
+    "sine",
+    "sawtooth",
+    "square",
+    "triangle",
+    "fmsine",
+    "fmsawtooth",
+    "fmtriangle",
+    "amsine",
+    "amsawtooth",
+    "amtriangle",
   ]) as List<OscillatorType>;
 
   const setOscillator = (newType: Tone.ToneOscillatorType) => {
-    console.log(newType);
-
     setSynth((oldSynth: any) => {
       oldSynth.disconnect();
-
       return new Tone.MembraneSynth({
         oscillator: { type: newType } as Tone.OmniOscillatorOptions,
       }).toDestination() as any;
@@ -126,8 +136,8 @@ function SoundBoard({ synth, setSynth}: InstrumentProps): JSX.Element {
   };
 
   useEffect(() => {
-    setOscillator('square');
-  }, []); 
+    setOscillator("square");
+  }, []);
 
   return (
     <div className="pv4">
@@ -144,8 +154,8 @@ function SoundBoard({ synth, setSynth}: InstrumentProps): JSX.Element {
           </div>
         ))}
       </div>
-      <div className={'pl4 pt4 flex'}>
-        {oscillators.map(o => (
+      <div className={"pl4 pt4 flex"}>
+        {oscillators.map((o) => (
           <ButtonType
             key={o}
             title={o}
@@ -158,4 +168,4 @@ function SoundBoard({ synth, setSynth}: InstrumentProps): JSX.Element {
   );
 }
 
-export const SoundBoardInstrument = new Instrument('SoundBoard', SoundBoard);
+export const SoundBoardInstrument = new Instrument("SoundBoard", SoundBoard);
