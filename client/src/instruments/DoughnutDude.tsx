@@ -39,6 +39,38 @@ function SliderType({ title, onClick, active }: any): JSX.Element {
   );
 }
 
+function EffectRangeInput({ title, clickHandler, update }: any): JSX.Element {
+  let input: number = 0;
+  const styles = ['b--black black', 'gray b--light-gray'];
+  const [status, setStatus] = React.useState({active: false, style: styles[1]});
+  return (
+    <div>
+    <label htmlFor={title}
+      onClick={()=>{
+        console.log("input",input);//debug output
+        setStatus({active: clickHandler(status.active, input), style: styles[+ status.active]});
+        console.log(status);
+      }}
+      className={classNames('dim pointer ph2 pv1 ba mr2 br1 fw7 bw1', status.style)}
+    >
+      {title}
+    </label>
+    <input name={title} type='range' min='0' max='60' defaultValue='30'
+    onInput={(event) => {
+      input = parseInt((event.target as HTMLInputElement).value)-30;
+      console.log("input: ",input);//debug output
+      update(status.active, input);
+    }}
+    style={{
+      width: '20rem',
+      backgroundColor: 'darkgray',
+      borderRadius: '5px',
+      borderColor: 'tan',
+    }}></input>
+    </div>
+  );
+}
+
 function Slider({ synth, setSynth }: InstrumentProps): JSX.Element {
   const setOscillator = (newType: Tone.ToneOscillatorType) => {
     setSynth(oldSynth => {
@@ -114,8 +146,8 @@ function Slider({ synth, setSynth }: InstrumentProps): JSX.Element {
       //   event.stopPropagation();
       // }}
         className={classNames('absolute h4', {
-          'bg-black black': minor, // minor keys are black
-          'white bg-white': !minor, // major keys are white
+          'bg-black black': minor, // frequencies that match minor keys are black
+          'white bg-white': !minor, // frequencies that match major keys are white
         })}
         style={{
           // CSS
@@ -145,7 +177,6 @@ function Slider({ synth, setSynth }: InstrumentProps): JSX.Element {
         keys.map(key => {
           const isMinor = key.note.indexOf('b') !== -1;
           const note = `${key.note}${octave}`;
-          //console.log(`bepis ${note}`);//debug output
           return (
             <SliderKey
               key={note} //react key
@@ -158,28 +189,38 @@ function Slider({ synth, setSynth }: InstrumentProps): JSX.Element {
           );
         }),
       )}
-      </div>
-      <div className={'pl4 pt4 flex'}>
-        <div>Frequency: {currentNote.freq.toString().padStart(5,'0')}Hz</div>, <div>Volume: {currentNote.vol}dB</div>
-      </div>
+    </div>
 
-      {/* <div className={'pl4 pt4 flex'}>
-        <label htmlFor="detune">Detune</label>
-        <input name="detune" type='range'
-        onInput={(event) => {
-          const input = parseInt((event.target as HTMLInputElement).value);
-          console.log("detune: ",input);//debug output
-          synth.set({
-            detune: input,
-          });
-        }}
-        style={{
-          width: '20rem',
-          backgroundColor: 'darkgray',
-          borderRadius: '5px',
-          borderColor: 'tan',
-        }}></input>
-      </div> */}
+    <div className={'pl4 pt4 flex'}>
+        <div>
+          <EffectRangeInput
+            title={"Detune"}
+            clickHandler={(detuneActive: boolean, input: number)=>{
+              console.log("toggling detuneactive:", detuneActive);//debug output
+              if (!detuneActive) {
+                synth.set({
+                  detune: input,
+                });
+              } else {
+                synth.set({
+                  detune: 0,
+                });
+              }
+              return !detuneActive;
+            }}
+            update={(detuneActive: boolean, input:number)=>{
+              if (detuneActive) {
+                synth.set({
+                  detune: input,
+                });
+              }
+              console.log("detune:",synth?.detune.value);//debug output
+            }}
+          />
+        </div>
+        <div>Frequency: {currentNote.freq.toString().padStart(5,'0')}Hz</div>,
+        <div>Volume: {currentNote.vol >= 0 ? '+'+currentNote.vol : currentNote.vol}dB</div>
+      </div>
 
       <div className={'pl4 pt4 flex'}>
         {oscillators.map(o => (
@@ -194,108 +235,5 @@ function Slider({ synth, setSynth }: InstrumentProps): JSX.Element {
     </div>
   );
 }
-
-/*
-//OLD prototype v1
-function Slider({ synth, setSynth }: InstrumentProps): JSX.Element {
-  const keys = List([
-    { note: 'C', freq: 32.70 },
-    { note: 'Db',freq: 34.65 },
-    { note: 'D', freq: 36.71 },
-    { note: 'Eb',freq: 38.89 },
-    { note: 'E', freq: 41.20 },
-    { note: 'F', freq: 43.65 },
-    { note: 'Gb',freq: 46.25 },
-    { note: 'G', freq: 49.00 },
-    { note: 'Ab',freq: 51.91 },
-    { note: 'A', freq: 27.50 },
-    { note: 'Bb',freq: 29.14 },
-    { note: 'B', freq: 30.87 },
-  ]);
-
-  let currentNote: number = 0;
-
-  function SliderKey({
-    note,
-    synth,
-    index,
-  }: SliderKeyProps): JSX.Element {
-    console.log("let: "+note as Frequency);
-    return (
-      // Observations:
-      // 1. The JSX refers to the HTML-looking syntax within TypeScript.
-      // 2. The JSX will be **transpiled** into the corresponding `React.createElement` library call.
-      // 3. The curly braces `{` and `}` should remind you of string interpolation.
-      <div
-        onMouseEnter={()=>{currentNote = note; synth.setNote(note)}}
-        className={classNames('ba pointer absolute dim', {
-          'black bg-white h4': checkIfFreqIsSemitone(note),
-          'black bg-white h3': !checkIfFreqIsSemitone(note),
-        })}
-        style={{
-          // CSS
-          top: 0,
-          left: `${index * unitWidth}rem`,
-          zIndex: 0,
-          width: `${unitWidth}rem`,
-          marginLeft: 0,
-        }}
-      ></div>
-    );
-  }
-
-  const setOscillator = (newType: Tone.ToneOscillatorType) => {
-    setSynth(oldSynth => {
-      oldSynth.disconnect();
-
-      return new Tone.Synth({
-        oscillator: { type: newType } as Tone.OmniOscillatorOptions,
-      }).toDestination();
-    });
-  };
-
-  const oscillators: List<OscillatorType> = List([
-    'sine',
-    'sawtooth',
-    'square',
-    'triangle',
-    'fmsine',
-    'fmsawtooth',
-    'fmtriangle',
-    'amsine',
-    'amsawtooth',
-    'amtriangle',
-  ]) as List<OscillatorType>;
-
-  return (
-    <div 
-    onMouseDown={()=>synth?.triggerAttack(currentNote)} // Question: what is `onMouseDown`?
-    onMouseUp={() => synth?.triggerRelease('+0.25')} // Question: what is `onMouseUp`?
-    className="pv4">
-      <div className="relative dib h4 w-100 ml4">
-        {Range(16.35, 3520).map(freq => { //Number of semitones in 7 octaves
-          //console.log("F: "+Math.pow(2,freq/12));//debug output
-          return (
-            <SliderKey
-              note={freq}
-              synth={synth}
-              index={freq-17}
-            />
-          );
-        })}
-      </div>
-      <div className={'pl4 pt4 flex'}>
-        {oscillators.map(o => (
-          <SliderType
-            key={o}
-            title={o}
-            onClick={() => setOscillator(o)}
-            active={synth?.oscillator.type === o}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}*/
 
 export const SliderInstrument = new Instrument('Slider', Slider);
