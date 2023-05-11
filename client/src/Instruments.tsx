@@ -64,13 +64,21 @@ export const InstrumentContainer: React.FC<InstrumentContainerProps> = ({
   //This function takes in the duration component of the note and changes it to be
   // the correct timing subdivision in seconds/fractions of a second.
   function noteDurationToTime(duration: string) {
-    let denom: number = parseInt(duration.charAt(0));
+    let result: number = 1/parseInt(duration.slice(0,duration.length-1));
+    //console.log(denom);//debug output
     if (duration.includes('t')) { //triplet
-      return 1/(denom*3);
+      return result/3;
     } else if (duration.includes('.')) {
-      return 1.5/denom;
+      let numOfDots: number = duration.length - duration.indexOf('.');
+      //console.log(numOfDots);//debug output
+      while (numOfDots > 0) {
+        result *= 1.5; // for each dot, add a smaller half
+        numOfDots--;
+      }
+      //console.log(total);//debug output
+      return result;
     } else {
-      return 1/denom;
+      return result;
     }
   }
 
@@ -93,7 +101,7 @@ export const InstrumentContainer: React.FC<InstrumentContainerProps> = ({
         velocity: 1,
       }
       playbackTime += noteDurationToTime(note[1]);
-      //console.log("playbackTime:",playbackTime);//debug output
+      console.log("playbackTime:",playbackTime);//debug output
       return result;
     });
 
