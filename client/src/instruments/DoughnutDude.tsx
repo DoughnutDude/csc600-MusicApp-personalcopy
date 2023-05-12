@@ -7,10 +7,22 @@ import React, { useEffect, FormEvent } from 'react';
 // project imports
 import { Instrument, InstrumentProps } from '../Instruments';
 import { Frequency } from 'tone/build/esm/core/type/Units';
+import { constants } from 'crypto';
+import { DispatchAction } from '../Reducer';
 
 /** ------------------------------------------------------------------------ **
  * Contains implementation of components for Slider.
  ** ------------------------------------------------------------------------ */
+const effects: Tone.InputNode[] = [
+  new Tone.Vibrato(4, .5,).toDestination(),
+  new Tone.Tremolo(7, 0.9).toDestination().start(),
+  new Tone.Reverb().toDestination(),
+]
+const vibratoIndex  = 0;
+const tremoloIndex = 1;
+const reverbIndex = 2;
+
+const styles = ['gray b--light-gray','b--black black'];
 
 function noteToFreq(k: number) {
   return 440*(Math.pow(2, (k/12)));
@@ -25,7 +37,7 @@ interface SliderKeyProps {
   index: number; // octave + index together give a location for the piano key
 }
 
-function SliderType({ title, onClick, active }: any): JSX.Element {
+function OscillatorType({ title, onClick, active }: any): JSX.Element {
   return (
     <div
       onClick={onClick}
@@ -39,30 +51,44 @@ function SliderType({ title, onClick, active }: any): JSX.Element {
   );
 }
 
-function EffectRangeInput({ title, clickHandler, update }: any): JSX.Element {
-  let input: number = 0;
-  const styles = ['b--black black', 'gray b--light-gray'];
-  const [status, setStatus] = React.useState({active: false, style: styles[1]});
+function EffectButton({ title, effectID, statuses, setStatuses, clickHandler }: any): JSX.Element {
+  return (
+    <div>
+    <label
+      onClick={()=>{
+        statuses.active[effectID] = clickHandler(statuses.active[effectID]);
+        setStatuses({active: statuses.active});
+      }}
+      className={classNames('dim pointer ph2 pv1 ba mr2 br1 fw7 bw1', styles[+ statuses.active[effectID]])}
+    >
+      {title}
+    </label>
+    </div>
+  );
+}
+
+function EffectRangeInput({ title, effectID, statuses, setStatuses, clickHandler, update, min, max, defaultValue }: any): JSX.Element {
+  const [effectValue, setEffectValue] = React.useState({input: defaultValue});
   return (
     <div>
     <label htmlFor={title}
       onClick={()=>{
-        console.log("input",input);//debug output
-        setStatus({active: clickHandler(status.active, input), style: styles[+ status.active]});
-        console.log(status);
+        //console.log("input",effectValue.input,"active:",+ statuses.active[effectID]);//debug output
+        statuses.active[effectID] = clickHandler(statuses.active[effectID], effectValue.input);
+        setStatuses({active: statuses.active});
       }}
-      className={classNames('dim pointer ph2 pv1 ba mr2 br1 fw7 bw1', status.style)}
+      className={classNames('dim pointer ph2 pv1 ba mr2 br1 fw7 bw1', styles[+ statuses.active[effectID]])}
     >
       {title}
     </label>
-    <input name={title} type='range' min='0' max='60' defaultValue='30'
+    <input name={title} type='range' min={min} max={max} defaultValue={defaultValue}
     onInput={(event) => {
-      input = parseInt((event.target as HTMLInputElement).value)-30;
-      console.log("input: ",input);//debug output
-      update(status.active, input);
+      setEffectValue({input: parseInt((event.target as HTMLInputElement).value)});
+      //console.log("input: ",effectValue.input);//debug output
+      update(statuses.active[effectID], effectValue.input);
     }}
     style={{
-      width: '20rem',
+      width: '10rem',
       backgroundColor: 'darkgray',
       borderRadius: '5px',
       borderColor: 'tan',
@@ -72,11 +98,24 @@ function EffectRangeInput({ title, clickHandler, update }: any): JSX.Element {
 }
 
 function Slider({ synth, setSynth }: InstrumentProps): JSX.Element {
+  const effectInitialStates: boolean[] = [];
+  //Loop for effects + 1 because detuner isn't technically an effect,
+  // but it still needs a state to determine if it's active or not.
+  for (let i: number = 0; i < effects.length+1; i++) {
+    effectInitialStates.push(false);
+  }
+  const [statuses, setStatuses] = React.useState({active: effectInitialStates});
+
   const setOscillator = (newType: Tone.ToneOscillatorType) => {
     setSynth(oldSynth => {
       oldSynth.disconnect();
 
-      console.log("osci changing");//debug output
+      //console.log("clearing effects");//debug output
+      for (let i in effects) {
+        //reset to initial states when switching oscillators
+        setStatuses({active: effectInitialStates});
+        synth.dispose();
+      }
       return new Tone.Synth({
         oscillator: { type: newType } as Tone.OmniOscillatorOptions,
       }).toDestination();
@@ -101,18 +140,18 @@ function Slider({ synth, setSynth }: InstrumentProps): JSX.Element {
   }, []); 
   
   const keys = List([
-    { note: 'C', idx: 0 },
-    { note: 'Db', idx: 0.5 },
-    { note: 'D', idx: 1 },
-    { note: 'Eb', idx: 1.5 },
-    { note: 'E', idx: 2 },
-    { note: 'F', idx: 3 },
-    { note: 'Gb', idx: 3.5 },
-    { note: 'G', idx: 4 },
-    { note: 'Ab', idx: 4.5 },
-    { note: 'A', idx: 5 },
-    { note: 'Bb', idx: 5.5 },
-    { note: 'B', idx: 6 },
+    { note: 'C' },
+    { note: 'Db' },
+    { note: 'D' },
+    { note: 'Eb' },
+    { note: 'E' },
+    { note: 'F' },
+    { note: 'Gb' },
+    { note: 'G' },
+    { note: 'Ab' },
+    { note: 'A' },
+    { note: 'Bb' },
+    { note: 'B' },
   ]);
 
   const [currentNote, setCurrentNote] = React.useState({freq: 0, vol: 0});
@@ -193,11 +232,73 @@ function Slider({ synth, setSynth }: InstrumentProps): JSX.Element {
 
     <div className={'pl4 pt4 flex'}>
         <div>
+          <EffectButton
+            title={"Vibrato"}
+            effectID={vibratoIndex}
+            statuses={statuses}
+            setStatuses={setStatuses}
+            clickHandler={(isActive: boolean)=>{
+              if (!isActive) {
+                synth.connect(effects[vibratoIndex]);
+              } else {
+                synth.disconnect(effects[vibratoIndex]);
+              }
+              return !isActive;
+            }}
+          />
+        </div>
+
+        <div>
+          <EffectButton
+            title={"Tremolo"}
+            effectID={tremoloIndex}
+            statuses={statuses}
+            setStatuses={setStatuses}
+            clickHandler={(isActive: boolean)=>{
+              if (!isActive) {
+                synth.connect(effects[tremoloIndex]);
+              } else {
+                synth.disconnect(effects[tremoloIndex]);
+              }
+              return !isActive;
+            }}
+          />
+        </div>
+        
+        <div>
           <EffectRangeInput
-            title={"Detune"}
-            clickHandler={(detuneActive: boolean, input: number)=>{
-              console.log("toggling detuneactive:", detuneActive);//debug output
-              if (!detuneActive) {
+            title={"Reverb"}
+            effectID={reverbIndex}
+            statuses={statuses}
+            setStatuses={setStatuses}
+            clickHandler={(isActive: boolean)=>{
+              if (!isActive) {
+                synth.connect(effects[reverbIndex]);
+              } else {
+                synth.disconnect(effects[reverbIndex]);
+              }
+              return !isActive;
+            }}
+            update={(isActive: boolean, input: number)=>{
+              if (isActive) {
+                (effects[reverbIndex] as Tone.Reverb).decay = input/10;
+              }
+            }}
+            min='1'
+            max='100'
+            defaultValue='10'
+          />
+        </div>
+        
+        <div>
+          <EffectRangeInput
+            title={"Detuner"}
+            effectID={effects.length}
+            statuses={statuses}
+            setStatuses={setStatuses}
+            clickHandler={(isActive: boolean, input: number)=>{
+              //console.log("toggling detuneactive:", isActive);//debug output
+              if (!isActive) {
                 synth.set({
                   detune: input,
                 });
@@ -206,25 +307,29 @@ function Slider({ synth, setSynth }: InstrumentProps): JSX.Element {
                   detune: 0,
                 });
               }
-              return !detuneActive;
+              //console.log(synth.detune.value);//debug output
+              return !isActive;
             }}
-            update={(detuneActive: boolean, input:number)=>{
-              if (detuneActive) {
+            update={(isActive: boolean, input:number)=>{
+              if (isActive) {
                 synth.set({
                   detune: input,
                 });
               }
-              console.log("detune:",synth?.detune.value);//debug output
             }}
+            min='-30'
+            max='30'
+            defaultValue='0'
           />
         </div>
+
         <div>Frequency: {currentNote.freq.toString().padStart(5,'0')}Hz</div>,
         <div>Volume: {currentNote.vol >= 0 ? '+'+currentNote.vol : currentNote.vol}dB</div>
       </div>
 
       <div className={'pl4 pt4 flex'}>
         {oscillators.map(o => (
-          <SliderType
+          <OscillatorType
             key={o}
             title={o}
             onClick={() => setOscillator(o)}
