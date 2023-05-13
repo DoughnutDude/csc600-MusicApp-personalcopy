@@ -1,7 +1,7 @@
 // 3rd party library imports
 import classNames from 'classnames';
 import { List } from 'immutable';
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import {
   RadioButton20,
@@ -89,6 +89,7 @@ export function SideNav({ state, dispatch }: SideNavProps): JSX.Element {
   const instruments: List<Instrument> = state.get('instruments');
   const activeInstrument = state.get('instrument')?.name;
   const location = useLocation();
+  
   console.log(instruments);
 
   return (
@@ -124,6 +125,7 @@ function VisualizersNav({ state }: SideNavProps): JSX.Element {
   const activeVisualizer = state.get('visualizer')?.name;
   const location = useLocation();
 
+  
   return (
     <Section title="Visualizers">
       {visualizers.map(v => (
@@ -158,9 +160,25 @@ function SongsNav({ state, dispatch }: SideNavProps): JSX.Element {
   */
 
   const songs: List<any> = state.get('songs', List());
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const filteredSongs = songs.filter(song =>
+    song.get('songTitle').toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <Section title="Playlist">
-      {songs.map(song => (
+      <input
+        type="text"
+        placeholder="Search songs..."
+        value={searchQuery}
+        onChange={handleSearch}
+      />
+      {filteredSongs.map(song => (
         <div
           key={song.get('id')}
           className="f6 pointer underline flex items-center no-underline i dim"
