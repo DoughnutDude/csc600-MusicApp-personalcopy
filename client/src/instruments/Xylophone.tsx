@@ -133,7 +133,7 @@ import { Instrument, InstrumentProps } from '../Instruments';
 
 function Xylophone({ synth, setSynth }: InstrumentProps): JSX.Element {
 
-  const [mySynth, mySetSynth] = useState({})
+  //const [mySynth, mySetSynth] = useState({})
 
 //let mySynth = JSON.parse(JSON.stringify(synth))
 //let mySetSynth = JSON.parse(JSON.stringify(setSynth))
@@ -155,7 +155,7 @@ function Xylophone({ synth, setSynth }: InstrumentProps): JSX.Element {
       ]);
     
       const setOscillator = () => {
-        mySetSynth(oldSynth => {
+        setSynth(oldSynth => {
           //oldSynth.disconnect();
     
           return new Tone.MetalSynth({
@@ -204,7 +204,7 @@ function Xylophone({ synth, setSynth }: InstrumentProps): JSX.Element {
                   <XyloPhoneKey
                     key={note} //react key
                     note={note}
-                    synth={mySynth}
+                    synth={synth}
                     minor={isMinor}
                     octave={octave}
                     index={(octave - 2) * 7 + key.idx}

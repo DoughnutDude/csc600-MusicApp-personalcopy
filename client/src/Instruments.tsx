@@ -150,7 +150,29 @@ export const InstrumentContainer: React.FC<InstrumentContainerProps> = ({
           },
         }).toDestination() as any;
       });
-    } else {
+    } else if (state.get('instrument')?.name === "Xylophone") {
+      setSynth(oldSynth => {
+        oldSynth.disconnect();
+
+        return new Tone.MetalSynth({
+            
+          envelope:{
+            attack: 0.08,
+            decay:0.3,
+            sustain:1,
+            release:0.5,
+          },
+          harmonicity:5.1,
+          modulationIndex:32,
+          resonance: 4000,
+          octaves:1.5,
+
+          //oscillator: { type: newType } as Tone.OmniOscillatorOptions,
+        }).toDestination() as any;
+  
+      })
+    }
+    else {
       setSynth(oldSynth => {
         oldSynth.disconnect();
   
@@ -171,7 +193,9 @@ export const InstrumentContainer: React.FC<InstrumentContainerProps> = ({
   /* this will simulate a wait() so that non-compatible synths are not passed 
   into InstrumentComponent */
 
-  if (!synth.oscillator && state.get('instrument')?.name !== 'Organs' ||
+  if (!synth.oscillator && state.get('instrument')?.name === 'Piano' ||
+  !synth.oscillator && state.get('instrument')?.name === 'SoundBoard' ||
+  !synth.oscillator && state.get('instrument')?.name === 'Slider' ||
   !synth.get().oscillator && state.get('instrument')?.name === "Organs") {
     return <div>Loading...</div>
   }
