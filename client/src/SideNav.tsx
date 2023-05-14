@@ -166,9 +166,17 @@ function SongsNav({ state, dispatch }: SideNavProps): JSX.Element {
     setSearchQuery(event.target.value);
   };
 
-  const filteredSongs = songs.filter(song =>
-    song.get('songTitle').toLowerCase().includes(searchQuery.toLowerCase())
-  );
+
+//Inlined the filter function to make sure the album and artist search works
+
+  // const filteredSongs = songs.filter((song) => {
+  //   song.get('songTitle').toLowerCase().includes(searchQuery.toLowerCase()) 
+  // }
+  //    
+  //   //song.get('album').toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //   //song.get('artist').toLowerCase().includes(searchQuery.toLowerCase())
+  // 
+  // );
 
   return (
     <Section title="Playlist">
@@ -178,7 +186,11 @@ function SongsNav({ state, dispatch }: SideNavProps): JSX.Element {
         value={searchQuery}
         onChange={handleSearch}
       />
-      {filteredSongs.map(song => (
+      {songs.filter(function(song) {
+        return (song.get('songTitle').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        song.get('album').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        song.get('artist').toLowerCase().includes(searchQuery.toLowerCase()))
+      }).map(song => (
         <div
           key={song.get('id')}
           className="f6 pointer underline flex items-center no-underline i dim"
