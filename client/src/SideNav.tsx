@@ -7,6 +7,7 @@ import {
   RadioButton20,
   RadioButtonChecked20,
   Music20,
+  TextUnderline16,
 } from '@carbon/icons-react';
 
 // project imports
@@ -187,23 +188,30 @@ function SongsNav({ state, dispatch }: SideNavProps): JSX.Element {
         onChange={handleSearch}
       />
       {songs.filter(function(song) {
-        return (song.get('songTitle').toLowerCase().includes(searchQuery.toLowerCase()) ||
-        song.get('album').toLowerCase().includes(searchQuery.toLowerCase()) ||
-        song.get('artist').toLowerCase().includes(searchQuery.toLowerCase()))
-      }).map(song => (
-        <div
-          key={song.get('id')}
-          className="f6 pointer underline flex items-center no-underline i dim"
-          onClick={() =>
-            dispatch(new DispatchAction('PLAY_SONG', { id: song.get('id') }))
-          }
-        >
-          <Music20 className="mr1" />
-          {song.get('songTitle')}
-          {song.get('artist')}
-          {song.get('album')}
-        </div>
-      ))}
+  return (
+    song.get('songTitle').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    song.get('album').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    song.get('artist').toLowerCase().includes(searchQuery.toLowerCase())
+  );
+}).map(song => (
+  <div
+    key={song.get('id')}
+    className="f6 pointer underline flex items-center no-underline i dim"
+    onClick={() =>
+      dispatch(new DispatchAction('PLAY_SONG', { id: song.get('id') }))
+    }
+  >
+    <Music20 className="mr1" />
+    <div>
+      <span><b>{song.get('songTitle')}</b> by </span>
+      <span><b>{song.get('artist')}</b></span>
+      <span style={{
+        textDecorationLine: 'underline'
+      }}><br/><i>{song.get('album')}</i></span>
+    </div>
+  </div>
+))}
+
     </Section>
   );
 }
