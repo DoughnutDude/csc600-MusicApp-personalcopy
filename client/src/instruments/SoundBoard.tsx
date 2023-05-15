@@ -107,8 +107,8 @@ function ButtonType({ title, onClick, active }: any): JSX.Element {
 }
 
 function SoundBoard({ synth, setSynth }: InstrumentProps): JSX.Element {
-  const keys = ["C", "D", "E", "G"];
-  const octaves = [4, 3, 2, 1];
+  const keys = ["A", "B", "C", "D", "E", "F", "G"];
+  const octaves = [5, 4, 3, 2, 1];
   const grid = Array.from({ length: octaves.length }, () =>
     new Array(keys.length).fill(false)
   );
