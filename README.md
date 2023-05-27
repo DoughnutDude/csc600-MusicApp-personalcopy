@@ -1,3 +1,19 @@
+# DoughnutDude's personal copy of KNCZ's music app
+This project had us grapple with a large React based music app. We were required to create new instruments, audio visualizers, and new features for the song database.
+
+Since the project made heavy use of Tone.js, I made a simple rectangular slider, with the vertical axis representing volume, and horizontal representing frequency, with some additional effect filters that could be toggled to further change the sound.
+
+I also made changes to the song playing mechanism. The original was only able to play songs with quarter notes, which I modified to support Tone.js's full range of note subdivisions.
+
+| [Video Demo Link](https://www.youtube.com/broken)|
+|:---:|
+
+Original Project Description/Details in [FINAL_PROJECT.md](https://github.com/DoughnutDude/csc600-MusicApp-personalcopy/blob/main/FINAL_PROJECT.md) and below:
+
+
+#
+
+
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/yXIQAqiF)
 [![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-718a45dd9cf7e7f842a935f5ebbe5719a5e09af4491e668f4dbf3b35d5cca122.svg)](https://classroom.github.com/online_ide?assignment_repo_id=10780705&assignment_repo_type=AssignmentRepo)
 # LamdbaVibe
