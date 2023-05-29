@@ -1,11 +1,11 @@
-# DoughnutDude's personal copy of KNCZ's music app
-This project had us grapple with a large React based music app. We were required to create new instruments, audio visualizers, and new features for the song database.
+# DoughnutDude's personal copy of csc600, team KNCZ's music app
+This project had us grapple with a React based music app for our Programming Languages and Paradigms class as a way of becoming familiar with Functional Programming concepts implemented in a relatively large program. We were required to create new instruments, new audio visualizers, and new features for the song database.
 
-Since the project made heavy use of Tone.js, I made a simple rectangular slider, with the vertical axis representing volume, and horizontal representing frequency, with some additional effect filters that could be toggled to further change the sound.
+Since the project made heavy use of Tone.js, I made a simple rectangular slider as my instrument, with the vertical axis representing volume, and horizontal representing frequency, with some additional effect filters that could be toggled to further change the sound.
 
 I also made changes to the song playing mechanism. The original was only able to play songs with quarter notes, which I modified to support Tone.js's full range of note subdivisions.
 
-| [Video Demo Link](https://www.youtube.com/broken)|
+| [Video Demo Link](https://www.youtube.com/watch?v=gca9xS5r61I&ab_channel=CameronYee)|
 |:---:|
 
 Original Project Description/Details in [FINAL_PROJECT.md](https://github.com/DoughnutDude/csc600-MusicApp-personalcopy/blob/main/FINAL_PROJECT.md) and below:
