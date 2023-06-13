@@ -8,7 +8,7 @@ I also made changes to the song playing mechanism. The original was only able to
 | [Video Demo Link](https://www.youtube.com/watch?v=gca9xS5r61I&ab_channel=CameronYee)|
 |:---:|
 
-Original Project Description/Details in [FINAL_PROJECT.md](https://github.com/DoughnutDude/csc600-MusicApp-personalcopy/blob/main/FINAL_PROJECT.md) and below:
+Original Project Description/Details in [FINAL_PROJECT.md](/FINAL_PROJECT.md) and below:
 
 
 #
